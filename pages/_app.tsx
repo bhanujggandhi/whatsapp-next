@@ -19,15 +19,17 @@ function MyApp({
   const [user, loading] = useAuthState(auth);
 
   useEffect(() => {
-    db.collection("users").doc(user?.uid).set(
-      {
-        email: user?.email,
-        lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
-        photoURL: user?.photoURL,
-      },
-      { merge: true }
-    );
-  }, []);
+    if (user) {
+      db.collection("users").doc(user?.uid).set(
+        {
+          email: user?.email,
+          lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+          photoURL: user?.photoURL,
+        },
+        { merge: true }
+      );
+    }
+  }, [user]);
 
   if (loading) return <Loading />;
 

@@ -3,6 +3,7 @@ import * as EmailValidator from "email-validator";
 
 import { Avatar, Button, IconButton } from "@material-ui/core";
 import { MoreVert, Chat, Search } from "@material-ui/icons";
+import { auth } from "../firebase";
 
 const Sidebar = () => {
   const createChat = () => {
@@ -20,7 +21,7 @@ const Sidebar = () => {
   return (
     <Container>
       <Header>
-        <UserAvatar />
+        <UserAvatar onClick={() => auth.signOut()} />
 
         <IconsContainer>
           <IconButton>

@@ -1,16 +1,40 @@
 import { useRouter } from "next/router";
 import styled from "styled-components";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { useCollection } from "react-firebase-hooks/firestore";
 
 import { ChatScreenProps } from "pages/chat/[chatId]";
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
 import { Avatar, IconButton } from "@material-ui/core";
-import { AttachFile, MoreVert } from "@material-ui/icons";
+import { AttachFile, InsertEmoticon, Mic, MoreVert } from "@material-ui/icons";
+import Message from "./Message";
 
 const ChatScreen = ({ chat, messages }: ChatScreenProps) => {
   const router = useRouter();
 
   const [user] = useAuthState(auth);
+  const [messagesSnapshot] = useCollection(
+    db
+      .collection("chats")
+      .doc(router.query.chatId as string)
+      .collection("messages")
+      .orderBy("timestamp", "asc")
+  );
+
+  const showMessages = () => {
+    if (messagesSnapshot) {
+      return messagesSnapshot.docs.map((message) => (
+        <Message
+          key={message.id}
+          user={message.data().user}
+          message={{
+            ...message.data(),
+            timestamp: message.data().timestamp?.toDate().getTime(),
+          }}
+        />
+      ));
+    }
+  };
 
   return (
     <Container>
@@ -30,6 +54,17 @@ const ChatScreen = ({ chat, messages }: ChatScreenProps) => {
           </IconButton>
         </HeaderIcons>
       </Header>
+
+      <MessageContainer>
+        {showMessages()}
+        <EndOfMessages />
+      </MessageContainer>
+
+      <InputContainer>
+        <InsertEmoticon />
+        <Input />
+        <Mic />
+      </InputContainer>
     </Container>
   );
 };
@@ -37,6 +72,27 @@ const ChatScreen = ({ chat, messages }: ChatScreenProps) => {
 export default ChatScreen;
 
 const Container = styled.div``;
+
+const Input = styled.input`
+  flex: 1;
+  outline: 0;
+  border: none;
+  border-radius: 10px;
+  padding: 20px;
+  background-color: whitesmoke;
+  margin-left: 15px;
+  margin-right: 15px;
+`;
+
+const InputContainer = styled.form`
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  position: sticky;
+  bottom: 0;
+  background-color: white;
+  z-index: 100;
+`;
 
 const Header = styled.div`
   position: sticky;
@@ -64,4 +120,12 @@ const HeaderInformation = styled.div`
   }
 `;
 
+const EndOfMessages = styled.div``;
+
 const HeaderIcons = styled.div``;
+
+const MessageContainer = styled.div`
+  padding: 30px;
+  background-color: #e5ded8;
+  min-height: 90vh;
+`;

@@ -16,6 +16,7 @@ const Sidebar = () => {
 
   const [chatsSnapshot] = useCollection(userChatRef);
 
+  // @ts-ignore
   const createChat = () => {
     const input = prompt(
       "Please enter an email address for the user you wish to chat with"

@@ -4,6 +4,7 @@ import styled from "styled-components";
 import firebase from "firebase/app";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollection } from "react-firebase-hooks/firestore";
+import TimeAgo from "timeago-react";
 
 import { ChatScreenProps } from "pages/chat/[chatId]";
 import { auth, db } from "../firebase";
@@ -90,7 +91,18 @@ const ChatScreen = ({ chat, messages }: ChatScreenProps) => {
 
         <HeaderInformation>
           <h3>{recipientEmail}</h3>
-          <p>Last seen ...</p>
+          {recipientSnapshot ? (
+            <p>
+              Last active:{" "}
+              {recipient?.lastSeen?.toDate() ? (
+                <TimeAgo datetime={recipient?.lastSeen?.toDate()} />
+              ) : (
+                "Unavailable"
+              )}
+            </p>
+          ) : (
+            <p>Loading Last active...</p>
+          )}
         </HeaderInformation>
         <HeaderIcons>
           <IconButton>

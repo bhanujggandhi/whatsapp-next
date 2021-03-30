@@ -33,6 +33,8 @@ const Sidebar = () => {
         users: [user?.email, input],
       });
     }
+
+    return;
   };
 
   const chatAlreadyExist = (recipientEmail: string) =>

@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import styled from "styled-components";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollection } from "react-firebase-hooks/firestore";
@@ -13,6 +14,7 @@ type Props = {
 };
 
 const UserChat = ({ id, users }: Props) => {
+  const router = useRouter();
   const [user] = useAuthState(auth);
   const [recipientSnapshot] = useCollection(
     db.collection("users").where("email", "==", getReciepientEmail(users, user))
@@ -22,7 +24,7 @@ const UserChat = ({ id, users }: Props) => {
   const recipientEmail = getReciepientEmail(users, user);
 
   return (
-    <Container>
+    <Container onClick={() => router.push(`/chat/${id}`)}>
       {recipient ? (
         <UserAvatar src={recipient.photoURL} />
       ) : (

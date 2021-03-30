@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/router";
 import styled from "styled-components";
 import firebase from "firebase/app";
@@ -32,6 +32,7 @@ const ChatScreen = ({ chat, messages }: ChatScreenProps) => {
   );
 
   const [input, setInput] = useState("");
+  const endOfMessagesRef = useRef(null);
 
   const showMessages = () => {
     if (messagesSnapshot) {
@@ -50,6 +51,14 @@ const ChatScreen = ({ chat, messages }: ChatScreenProps) => {
         <Message key={message.id} user={message.user} message={message} />
       ));
     }
+  };
+
+  const scrollToBottom = () => {
+    // @ts-ignore
+    endOfMessagesRef.current.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   };
 
   const sendMessage = (e: any) => {
@@ -74,6 +83,7 @@ const ChatScreen = ({ chat, messages }: ChatScreenProps) => {
       });
 
     setInput("");
+    scrollToBottom();
   };
 
   const recipient = recipientSnapshot?.docs?.[0]?.data();
@@ -116,7 +126,7 @@ const ChatScreen = ({ chat, messages }: ChatScreenProps) => {
 
       <MessageContainer>
         {showMessages()}
-        <EndOfMessages />
+        <EndOfMessages ref={endOfMessagesRef} />
       </MessageContainer>
 
       <InputContainer>
@@ -173,7 +183,7 @@ const HeaderInformation = styled.div`
   flex: 1;
 
   > h3 {
-    margin-bottom: 3px;
+    margin-bottom: 0px;
   }
 
   > p {
@@ -182,7 +192,9 @@ const HeaderInformation = styled.div`
   }
 `;
 
-const EndOfMessages = styled.div``;
+const EndOfMessages = styled.div`
+  margin-bottom: 50px;
+`;
 
 const HeaderIcons = styled.div``;
 

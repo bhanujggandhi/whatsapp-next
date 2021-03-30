@@ -1,20 +1,29 @@
 import Head from "next/head";
 import styled from "styled-components";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 import Sidebar from "components/Sidebar";
 import ChatScreen from "components/ChatScreen";
 import { NextPageContext } from "next";
-import { db } from "../../firebase";
+import { auth, db } from "../../firebase";
+import getReciepientEmail from "utils/getRecipientEmail";
 
-const Chat = ({ chat, messages }) => {
+export type ChatScreenProps = {
+  chat: any;
+  messages: string;
+};
+
+const Chat = ({ chat, messages }: ChatScreenProps) => {
+  const [user] = useAuthState(auth);
+
   return (
     <Container>
       <Head>
-        <title>Chat</title>
+        <title>Chat with {getReciepientEmail(chat.users, user)}</title>
       </Head>
       <Sidebar />
       <ChatContainer>
-        <ChatScreen />
+        <ChatScreen chat={chat} messages={messages} />
       </ChatContainer>
     </Container>
   );

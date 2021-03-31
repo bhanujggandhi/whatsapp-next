@@ -81,7 +81,7 @@ const Sidebar = () => {
           <UserAvatar src={user?.photoURL as string} />
 
           <IconsContainer>
-            <IconButton>
+            <IconButton onClick={handleOpen}>
               <Chat />
             </IconButton>
             <IconButton onClick={handleClick}>
@@ -120,7 +120,7 @@ const Sidebar = () => {
         aria-describedby='alert-dialog-description'
       >
         <DialogTitle id='alert-dialog-title'>
-          Please enter the email
+          Please enter an email address for the user you wish to chat with
         </DialogTitle>
         <Formik
           initialValues={{ email: "" }}

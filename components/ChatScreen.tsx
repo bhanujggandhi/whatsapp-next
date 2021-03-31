@@ -34,8 +34,17 @@ const ChatScreen = ({ chat, messages }: ChatScreenProps) => {
   const [input, setInput] = useState("");
   const endOfMessagesRef = useRef(null);
 
+  const scrollToBottom = () => {
+    // @ts-ignore
+    endOfMessagesRef.current.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
   const showMessages = () => {
     if (messagesSnapshot) {
+      scrollToBottom();
       return messagesSnapshot.docs.map((message) => (
         <Message
           key={message.id}
@@ -51,14 +60,6 @@ const ChatScreen = ({ chat, messages }: ChatScreenProps) => {
         <Message key={message.id} user={message.user} message={message} />
       ));
     }
-  };
-
-  const scrollToBottom = () => {
-    // @ts-ignore
-    endOfMessagesRef.current.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
   };
 
   const sendMessage = (e: any) => {

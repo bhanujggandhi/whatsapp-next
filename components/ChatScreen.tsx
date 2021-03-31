@@ -1,17 +1,20 @@
-import { useRef, useState } from "react";
+import { MouseEvent, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import styled from "styled-components";
 import firebase from "firebase/app";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollection } from "react-firebase-hooks/firestore";
 import TimeAgo from "timeago-react";
+import { Picker } from "emoji-mart";
 
 import { ChatScreenProps } from "pages/chat/[chatId]";
 import { auth, db } from "../firebase";
-import { Avatar, IconButton } from "@material-ui/core";
+import { Avatar, IconButton, Popover } from "@material-ui/core";
 import { AttachFile, InsertEmoticon, Mic, MoreVert } from "@material-ui/icons";
 import Message from "./Message";
 import getReciepientEmail from "utils/getRecipientEmail";
+
+import "emoji-mart/css/emoji-mart.css";
 
 const ChatScreen = ({ chat, messages }: ChatScreenProps) => {
   const router = useRouter();
@@ -91,6 +94,31 @@ const ChatScreen = ({ chat, messages }: ChatScreenProps) => {
 
   const recipientEmail = getReciepientEmail(chat.users, user);
 
+  // const addEmoji = (e) => {
+  //   let emoji = e.native;
+  //   setInput(input + emoji);
+  // };
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
+
+  const addEmoji = (e: any) => {
+    let sym = e.unified.split("-");
+    let codesArray: any[] = [];
+    sym.forEach((el: any) => codesArray.push("0x" + el));
+    let emoji = String.fromCodePoint(...codesArray);
+    setInput(input + emoji);
+  };
+
   return (
     <Container>
       <Header>
@@ -132,9 +160,25 @@ const ChatScreen = ({ chat, messages }: ChatScreenProps) => {
       </MessageContainer>
 
       <InputContainer>
-        <IconButton>
+        <IconButton onClick={handleClick}>
           <InsertEmoticon />
         </IconButton>
+        <Popover
+          id={id}
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "center",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+        >
+          <Picker onSelect={addEmoji} />
+        </Popover>
         <Input value={input} onChange={(e) => setInput(e.target.value)} />
         <button hidden disabled={!input} type='submit' onClick={sendMessage}>
           Send Message

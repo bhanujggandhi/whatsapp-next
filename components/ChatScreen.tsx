@@ -101,7 +101,8 @@ const ChatScreen = ({ chat, messages }: ChatScreenProps) => {
         )}
 
         <HeaderInformation>
-          <h3>{recipientEmail}</h3>
+          {recipientSnapshot ? <h3>{recipient?.name}</h3> : <h3>Loading..</h3>}
+          <span>{recipientEmail}</span>
           {recipientSnapshot ? (
             <p>
               Last active:{" "}
@@ -187,7 +188,12 @@ const HeaderInformation = styled.div`
     margin-bottom: 0px;
   }
 
+  > span {
+    color: black;
+  }
+
   > p {
+    margin-top: 5px;
     font-size: 14px;
     color: gray;
   }

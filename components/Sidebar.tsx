@@ -1,12 +1,23 @@
+import { useState } from "react";
 import styled from "styled-components";
-import * as EmailValidator from "email-validator";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollection } from "react-firebase-hooks/firestore";
 
-import { Avatar, Button, IconButton } from "@material-ui/core";
+import {
+  Avatar,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Input,
+  InputLabel,
+} from "@material-ui/core";
 import { MoreVert, Chat, Search } from "@material-ui/icons";
 import { auth, db } from "../firebase";
 import UserChat from "./UserChat";
+import { Field, Form, Formik } from "formik";
 
 const Sidebar = () => {
   const [user] = useAuthState(auth);
@@ -17,21 +28,19 @@ const Sidebar = () => {
   const [chatsSnapshot] = useCollection(userChatRef);
 
   // @ts-ignore
-  const createChat = () => {
-    const input = prompt(
-      "Please enter an email address for the user you wish to chat with"
-    );
+  const createChat = (
+    values: {
+      email: string;
+    } & {
+      email: string;
+    }
+  ) => {
+    const { email } = values;
 
-    if (!input) return null;
-
-    if (
-      EmailValidator.validate(input) &&
-      !chatAlreadyExist(input) &&
-      input !== user?.email
-    ) {
+    if (!chatAlreadyExist(email) && email !== user?.email) {
       // We need to add the chat into the DB 'chats' if it does not already exist and is valid and is not user's own email
       db.collection("chats").add({
-        users: [user?.email, input],
+        users: [user?.email, email],
       });
     }
   };
@@ -43,36 +52,88 @@ const Sidebar = () => {
         0
     );
 
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
-    <Container>
-      <Header>
-        <UserAvatar
-          src={user?.photoURL as string}
-          onClick={() => auth.signOut()}
-        />
+    <>
+      <Container>
+        <Header>
+          <UserAvatar
+            src={user?.photoURL as string}
+            onClick={() => auth.signOut()}
+          />
 
-        <IconsContainer>
-          <IconButton>
-            <Chat />
-          </IconButton>
-          <IconButton>
-            <MoreVert />
-          </IconButton>
-        </IconsContainer>
-      </Header>
+          <IconsContainer>
+            <IconButton>
+              <Chat />
+            </IconButton>
+            <IconButton>
+              <MoreVert />
+            </IconButton>
+          </IconsContainer>
+        </Header>
 
-      <SearchContainer>
-        <Search />
-        <SearchInput placeholder='Search in chats' />
-      </SearchContainer>
+        <SearchContainer>
+          <Search />
+          <SearchInput placeholder='Search in chats' />
+        </SearchContainer>
 
-      <SidebarButton onClick={createChat}>Start a new chat</SidebarButton>
+        <SidebarButton onClick={handleOpen}>Start a new chat</SidebarButton>
 
-      {/* List of chats */}
-      {chatsSnapshot?.docs.map((chat) => (
-        <UserChat key={chat.id} id={chat.id} users={chat.data().users} />
-      ))}
-    </Container>
+        {/* List of chats */}
+        {chatsSnapshot?.docs.map((chat) => (
+          <UserChat key={chat.id} id={chat.id} users={chat.data().users} />
+        ))}
+      </Container>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby='alert-dialog-title'
+        aria-describedby='alert-dialog-description'
+      >
+        <DialogTitle id='alert-dialog-title'>
+          Please enter the email
+        </DialogTitle>
+        <Formik
+          initialValues={{ email: "" }}
+          onSubmit={(values, actions) => {
+            createChat(values);
+            actions.setSubmitting(false);
+          }}
+        >
+          {({ isSubmitting, initialValues }) => (
+            <Form>
+              <FormContainer>
+                <DialogContent>
+                  <FieldContainer>
+                    <InputLabel htmlFor='email'>Email address</InputLabel>
+                    <Field as={Input} type='email' name='email' />
+                  </FieldContainer>
+                </DialogContent>
+                <DialogActions>
+                  <Button
+                    disabled={isSubmitting}
+                    variant='contained'
+                    color='primary'
+                    type='submit'
+                  >
+                    Submit
+                  </Button>
+                </DialogActions>
+              </FormContainer>
+            </Form>
+          )}
+        </Formik>
+      </Dialog>
+    </>
   );
 };
 
@@ -138,3 +199,12 @@ const UserAvatar = styled(Avatar)`
 `;
 
 const IconsContainer = styled.div``;
+
+const FormContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const FieldContainer = styled.div`
+  padding: 15px;
+`;

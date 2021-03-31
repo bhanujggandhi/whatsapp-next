@@ -1,10 +1,10 @@
 import Head from "next/head";
 import styled from "styled-components";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { NextPageContext } from "next";
 
 import Sidebar from "components/Sidebar";
 import ChatScreen from "components/ChatScreen";
-import { NextPageContext } from "next";
 import { auth, db } from "../../firebase";
 import getReciepientEmail from "utils/getRecipientEmail";
 

@@ -132,7 +132,9 @@ const ChatScreen = ({ chat, messages }: ChatScreenProps) => {
       </MessageContainer>
 
       <InputContainer>
-        <InsertEmoticon />
+        <IconButton>
+          <InsertEmoticon />
+        </IconButton>
         <Input value={input} onChange={(e) => setInput(e.target.value)} />
         <button hidden disabled={!input} type='submit' onClick={sendMessage}>
           Send Message

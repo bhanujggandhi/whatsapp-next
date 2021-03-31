@@ -4,7 +4,7 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 
 import Login from "./login";
-import Loading from "components/Loading.jsx";
+import Loading from "components/Loading";
 import { auth, db } from "../firebase";
 
 import "../styles/globals.css";

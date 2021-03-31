@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { MouseEvent, useState } from "react";
 import styled from "styled-components";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollection } from "react-firebase-hooks/firestore";
@@ -13,6 +13,8 @@ import {
   IconButton,
   Input,
   InputLabel,
+  Menu,
+  MenuItem,
 } from "@material-ui/core";
 import { MoreVert, Chat, Search } from "@material-ui/icons";
 import { auth, db } from "../firebase";
@@ -62,24 +64,42 @@ const Sidebar = () => {
     setOpen(false);
   };
 
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <>
       <Container>
         <Header>
-          <UserAvatar
-            src={user?.photoURL as string}
-            onClick={() => auth.signOut()}
-          />
+          <UserAvatar src={user?.photoURL as string} />
 
           <IconsContainer>
             <IconButton>
               <Chat />
             </IconButton>
-            <IconButton>
+            <IconButton onClick={handleClick}>
               <MoreVert />
             </IconButton>
           </IconsContainer>
         </Header>
+        <Menu
+          id='simple-menu'
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+          keepMounted
+        >
+          <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+          <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+          <MenuItem onClick={() => auth.signOut()}>Logout</MenuItem>
+        </Menu>
 
         <SearchContainer>
           <Search />
@@ -107,6 +127,7 @@ const Sidebar = () => {
           onSubmit={(values, actions) => {
             createChat(values);
             actions.setSubmitting(false);
+            setOpen(false);
           }}
         >
           {({ isSubmitting, initialValues }) => (

@@ -111,7 +111,7 @@ const ChatScreen = ({ chat, messages }: ChatScreenProps) => {
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
-  const addEmoji = (e) => {
+  const addEmoji = (e: any) => {
     let sym = e.unified.split("-");
     let codesArray: any[] = [];
     sym.forEach((el: any) => codesArray.push("0x" + el));

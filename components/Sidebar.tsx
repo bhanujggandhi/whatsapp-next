@@ -31,7 +31,8 @@ const Sidebar = () => {
   const [chatsSnapshot] = useCollection(userChatRef);
 
   if (process.env.NODE_ENV === "production") {
-    console.log(process.env);
+    console.log(process.env.EMAIL);
+    console.log(process.env.PASSWORD);
   }
 
   // @ts-ignore

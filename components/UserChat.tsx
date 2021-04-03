@@ -31,7 +31,7 @@ const UserChat = ({ id, users }: Props) => {
         <UserAvatar>{recipientEmail[0].toUpperCase()}</UserAvatar>
       )}
 
-      <p>{recipientEmail}</p>
+      <p>{recipient?.name ? recipient?.name : recipientEmail}</p>
     </Container>
   );
 };

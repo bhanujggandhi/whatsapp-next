@@ -2,6 +2,7 @@ import { MouseEvent, useState } from "react";
 import styled from "styled-components";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollection } from "react-firebase-hooks/firestore";
+import axios from "axios";
 
 import {
   Avatar,
@@ -30,20 +31,30 @@ const Sidebar = () => {
   const [chatsSnapshot] = useCollection(userChatRef);
 
   // @ts-ignore
-  const createChat = (
+  const createChat = async (
     values: {
       email: string;
     } & {
       email: string;
     }
   ) => {
-    const { email } = values;
+    try {
+      const { email } = values;
 
-    if (!chatAlreadyExist(email) && email !== user?.email) {
-      // We need to add the chat into the DB 'chats' if it does not already exist and is valid and is not user's own email
-      db.collection("chats").add({
-        users: [user?.email, email],
-      });
+      if (!chatAlreadyExist(email) && email !== user?.email) {
+        // We need to add the chat into the DB 'chats' if it does not already exist and is valid and is not user's own email
+
+        await axios.post("/api/hello", {
+          from: user?.email,
+          to: email,
+        });
+
+        db.collection("chats").add({
+          users: [user?.email, email],
+        });
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
 

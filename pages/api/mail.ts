@@ -22,9 +22,9 @@ export default async (req: any, res: any) => {
     };
     await transporter.sendMail(mailOptions);
 
-    res.send({ success: 1, message: "Email sent" });
+    res.status(200).send({ success: 1, message: "Email sent" });
   } catch (err) {
     console.error(err);
-    res.send({ success: 0, message: err });
+    res.status(400).send({ success: 0, message: err });
   }
 };

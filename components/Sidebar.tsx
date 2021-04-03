@@ -30,6 +30,10 @@ const Sidebar = () => {
 
   const [chatsSnapshot] = useCollection(userChatRef);
 
+  if (process.env.NODE_ENV === "production") {
+    console.log(process.env);
+  }
+
   // @ts-ignore
   const createChat = async (
     values: {
@@ -44,7 +48,7 @@ const Sidebar = () => {
       if (!chatAlreadyExist(email) && email !== user?.email) {
         // We need to add the chat into the DB 'chats' if it does not already exist and is valid and is not user's own email
 
-        await axios.post("/api/hello", {
+        await axios.post("/api/mail", {
           from: user?.email,
           to: email,
         });

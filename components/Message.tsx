@@ -35,6 +35,7 @@ const MessageElement = styled.p`
   padding-bottom: 26px;
   position: relative;
   text-align: right;
+  word-break: break-all;
 `;
 
 const Sender = styled(MessageElement)`

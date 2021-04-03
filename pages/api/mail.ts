@@ -28,7 +28,6 @@ export default async (req: any, res: any) => {
     res.status(400).send({
       success: 0,
       message: err,
-      cred: { e: process.env.EMAIL, p: process.env.PASSWORD },
     });
   }
 };

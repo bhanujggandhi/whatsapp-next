@@ -10,7 +10,6 @@ const oauth_client = new OAuth2(
 oauth_client.setCredentials({
   refresh_token: process.env.NEXT_PUBLIC_REFRESH_TOKEN,
 });
-
 export default async (req: any, res: any) => {
   try {
     const { from, to, name } = req.body;

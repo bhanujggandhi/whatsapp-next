@@ -1,21 +1,19 @@
 const nodemailer = require("nodemailer");
-const smtpTransport = require("nodemailer-smtp-transport");
+// const smtpTransport = require("nodemailer-smtp-transport");
 
 export default async (req: any, res: any) => {
   try {
     const { from, to, name } = req.body;
-    let transporter = nodemailer.createTransport(
-      smtpTransport({
-        port: 465,
-        host: "smtp.gmail.com",
-        service: "gmail",
-        auth: {
-          user: process.env.NEXT_PUBLIC_EMAIL,
-          pass: process.env.NEXT_PUBLIC_PASSWORD,
-        },
-        secure: true,
-      })
-    );
+    let transporter = nodemailer.createTransport({
+      port: 465,
+      host: "smtp.gmail.com",
+      service: "gmail",
+      auth: {
+        user: process.env.NEXT_PUBLIC_EMAIL,
+        pass: process.env.NEXT_PUBLIC_PASSWORD,
+      },
+      secure: true,
+    });
     await new Promise((resolve, reject) => {
       // verify connection configuration
       transporter.verify(function (error: any, success: any) {

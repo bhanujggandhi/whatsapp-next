@@ -61,14 +61,7 @@ const ChatScreen = ({ chat, messages }: ChatScreenProps) => {
       ));
     } else {
       return JSON.parse(messages).map((message: any) => (
-        <Message
-          key={message.id}
-          user={message.user}
-          message={Cryptojs.AES.decrypt(
-            message,
-            process.env.NEXT_PUBLIC_SECRET_KEY as string
-          ).toString(Cryptojs.enc.Utf8)}
-        />
+        <Message key={message.id} user={message.user} message={message} />
       ));
     }
   };
@@ -83,8 +76,6 @@ const ChatScreen = ({ chat, messages }: ChatScreenProps) => {
       },
       { merge: true }
     );
-
-    console.log(process.env.NEXT_PUBLIC_SECRET_KEY);
 
     db.collection("chats")
       .doc(router.query.chatId as string)

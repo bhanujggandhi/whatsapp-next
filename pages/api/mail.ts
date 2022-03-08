@@ -15,20 +15,13 @@ export default async (req: any, res: any) => {
     const { from, to, name } = req.body;
     const accessToken = await oauth2Client.getAccessToken();
 
-    console.log({
-      clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-      clientSecret: process.env.NEXT_PUBLIC_CLIENT_SECRET,
-      refreshToken: process.env.NEXT_PUBLIC_REFRESH_TOKEN,
-      accessToken,
-    });
-
     let transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 465,
       secure: true,
       auth: {
         type: "OAuth2",
-        user: "bhanujggandhi@gmail.com",
+        user: process.env.NEXT_PUBLIC_EMAIL,
         clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
         clientSecret: process.env.NEXT_PUBLIC_CLIENT_SECRET,
         refreshToken: process.env.NEXT_PUBLIC_REFRESH_TOKEN,
@@ -506,7 +499,9 @@ export default async (req: any, res: any) => {
                                                         "
                                                       >
                                                         Hey, ${
-                                                          name ? name : "you"
+                                                          name
+                                                            ? name.split(" ")[0]
+                                                            : "you"
                                                         }
                                                       </h1>
                                                     </td>

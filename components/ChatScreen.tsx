@@ -6,6 +6,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollection } from "react-firebase-hooks/firestore";
 import TimeAgo from "timeago-react";
 import { Picker } from "emoji-mart";
+import Cryptojs from "crypto-js";
 
 import { ChatScreenProps } from "pages/chat/[chatId]";
 import { auth, db } from "../firebase";
@@ -60,7 +61,14 @@ const ChatScreen = ({ chat, messages }: ChatScreenProps) => {
       ));
     } else {
       return JSON.parse(messages).map((message: any) => (
-        <Message key={message.id} user={message.user} message={message} />
+        <Message
+          key={message.id}
+          user={message.user}
+          message={Cryptojs.AES.decrypt(
+            message,
+            process.env.NEXT_PUBLIC_SECRET_KEY as string
+          ).toString(Cryptojs.enc.Utf8)}
+        />
       ));
     }
   };
@@ -76,12 +84,17 @@ const ChatScreen = ({ chat, messages }: ChatScreenProps) => {
       { merge: true }
     );
 
+    console.log(process.env.NEXT_PUBLIC_SECRET_KEY);
+
     db.collection("chats")
       .doc(router.query.chatId as string)
       .collection("messages")
       .add({
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        message: input,
+        message: Cryptojs.AES.encrypt(
+          input,
+          process.env.NEXT_PUBLIC_SECRET_KEY as string
+        ).toString(),
         user: user?.email,
         photoURL: user?.photoURL,
       });

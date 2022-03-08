@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { useAuthState } from "react-firebase-hooks/auth";
 import moment from "moment";
+import Cryptojs from "crypto-js";
 
 import { auth } from "../firebase";
 
@@ -12,7 +13,12 @@ const Message = ({ user, message }: any) => {
   return (
     <Container>
       <TypeOfMessage>
-        {message.message}
+        {message.message
+          ? Cryptojs.AES.decrypt(
+              message.message,
+              process.env.NEXT_PUBLIC_SECRET_KEY as string
+            ).toString(Cryptojs.enc.Utf8)
+          : null}
         <Timestamp>
           {message.timestamp ? moment(message.timestamp).format("LT") : "..."}
         </Timestamp>

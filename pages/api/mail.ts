@@ -1,19 +1,26 @@
 const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
-const OAuth2 = google.auth.OAuth2;
 
-const oauth_client = new OAuth2(
-  process.env.NEXT_PUBLIC_EMAIL,
-  process.env.NEXT_PUBLIC_CLIENT_ID
+const oauth2Client = new google.auth.OAuth2(
+  process.env.NEXT_PUBLIC_CLIENT_ID,
+  process.env.NEXT_PUBLIC_CLIENT_SECRET
 );
 
-oauth_client.setCredentials({
+oauth2Client.setCredentials({
   refresh_token: process.env.NEXT_PUBLIC_REFRESH_TOKEN,
 });
+
 export default async (req: any, res: any) => {
   try {
     const { from, to, name } = req.body;
-    const accessToken = oauth_client.getAccessToken();
+    const accessToken = await oauth2Client.getAccessToken();
+
+    console.log({
+      clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+      clientSecret: process.env.NEXT_PUBLIC_CLIENT_SECRET,
+      refreshToken: process.env.NEXT_PUBLIC_REFRESH_TOKEN,
+      accessToken,
+    });
 
     let transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
@@ -21,7 +28,7 @@ export default async (req: any, res: any) => {
       secure: true,
       auth: {
         type: "OAuth2",
-        user: process.env.NEXT_PUBLIC_EMAIL,
+        user: "bhanujggandhi@gmail.com",
         clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
         clientSecret: process.env.NEXT_PUBLIC_CLIENT_SECRET,
         refreshToken: process.env.NEXT_PUBLIC_REFRESH_TOKEN,

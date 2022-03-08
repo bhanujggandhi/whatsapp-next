@@ -13,17 +13,16 @@ const Message = ({ user, message }: any) => {
   return (
     <Container>
       <TypeOfMessage>
-        Encrypted: {message.message ? message.message : null}
+        {message.message
+          ? Cryptojs.AES.decrypt(
+              message.message,
+              process.env.NEXT_PUBLIC_SECRET_KEY as string
+            ).toString(Cryptojs.enc.Utf8)
+          : null}
         <hr />
-        Decrypted:{" "}
-        <b>
-          {message.message
-            ? Cryptojs.AES.decrypt(
-                message.message,
-                process.env.NEXT_PUBLIC_SECRET_KEY as string
-              ).toString(Cryptojs.enc.Utf8)
-            : null}
-        </b>
+        <p style={{ color: "gray" }}>
+          Encrypted: {message.message ? message.message : null}
+        </p>
         <Timestamp>
           {message.timestamp ? moment(message.timestamp).format("LT") : "..."}
         </Timestamp>

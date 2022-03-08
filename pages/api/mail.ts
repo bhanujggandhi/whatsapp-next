@@ -1,18 +1,33 @@
 const nodemailer = require("nodemailer");
-// const smtpTransport = require("nodemailer-smtp-transport");
+const { google } = require("googleapis");
+const OAuth2 = google.auth.OAuth2;
+
+const oauth_client = new OAuth2(
+  process.env.NEXT_PUBLIC_EMAIL,
+  process.env.NEXT_PUBLIC_CLIENT_ID
+);
+
+oauth_client.setCredentials({
+  refresh_token: process.env.NEXT_PUBLIC_REFRESH_TOKEN,
+});
 
 export default async (req: any, res: any) => {
   try {
     const { from, to, name } = req.body;
+    const accessToken = oauth_client.getAccessToken();
+
     let transporter = nodemailer.createTransport({
-      port: 465,
       host: "smtp.gmail.com",
-      service: "gmail",
-      auth: {
-        user: process.env.NEXT_PUBLIC_EMAIL,
-        pass: process.env.NEXT_PUBLIC_PASSWORD,
-      },
+      port: 465,
       secure: true,
+      auth: {
+        type: "OAuth2",
+        user: process.env.NEXT_PUBLIC_EMAIL,
+        clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+        clientSecret: process.env.NEXT_PUBLIC_CLIENT_SECRET,
+        refreshToken: process.env.NEXT_PUBLIC_REFRESH_TOKEN,
+        accessToken,
+      },
     });
     await new Promise((resolve, reject) => {
       // verify connection configuration

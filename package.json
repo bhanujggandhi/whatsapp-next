@@ -17,6 +17,7 @@
     "emoji-mart": "^3.0.1",
     "firebase": "^8.3.1",
     "formik": "^2.2.6",
+    "googleapis": "^95.0.0",
     "moment": "^2.29.1",
     "next": "12",
     "nodemailer": "^6.5.0",

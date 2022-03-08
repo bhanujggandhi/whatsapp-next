@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+const hbs = require("nodemailer-express-handlebars");
 
 export default async (req: any, res: any) => {
   try {
@@ -6,19 +7,30 @@ export default async (req: any, res: any) => {
     let transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: process.env.EMAIL,
-        pass: process.env.PASSWORD,
+        user: process.env.NEXT_PUBLIC_EMAIL,
+        pass: process.env.NEXT_PUBLIC_PASSWORD,
       },
     });
+    transporter.use(
+      "compile",
+      hbs({
+        viewEngine: "express-handlebars",
+        viewPath: __dirname + "../../../../../views/layouts/",
+      })
+    );
     const mailOptions = {
       from: "bhanujggandhi@gmail.com",
       to,
-      subject: `Texter: ${from} sent you a text`,
-      html:
-        `You are receiving this because ${from} sent you a text.\n\n` +
-        "Please click on the following link, or paste this into your browser to start the chat:\n\n" +
-        "https://whatsapp-next.vercel.app/" +
-        "\n\n",
+      subject: `MESSAGE: ${from} sent you a text`,
+      // text:
+      //   `You are receiving this because ${from} sent you a text.\n\n` +
+      //   "Please click on the following link, or paste this into your browser to start the chat:\n\n" +
+      //   "https://chat.bhanujgandhi.me" +
+      //   "\n\n",
+      template: "main",
+      context: {
+        sender: from,
+      },
     };
     await transporter.sendMail(mailOptions);
 

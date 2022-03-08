@@ -3,16 +3,31 @@ const smtpTransport = require("nodemailer-smtp-transport");
 
 export default async (req: any, res: any) => {
   try {
-    const { from, to } = req.body;
+    const { from, to, name } = req.body;
     let transporter = nodemailer.createTransport(
       smtpTransport({
+        port: 465,
+        host: "smtp.gmail.com",
         service: "gmail",
         auth: {
           user: process.env.NEXT_PUBLIC_EMAIL,
           pass: process.env.NEXT_PUBLIC_PASSWORD,
         },
+        secure: true,
       })
     );
+    await new Promise((resolve, reject) => {
+      // verify connection configuration
+      transporter.verify(function (error: any, success: any) {
+        if (error) {
+          console.log(error);
+          reject(error);
+        } else {
+          console.log("Server is ready to take our messages");
+          resolve(success);
+        }
+      });
+    });
     const mailOptions = {
       from: "bhanujggandhi@gmail.com",
       to,
@@ -471,7 +486,9 @@ export default async (req: any, res: any) => {
                                                           color: #111111;
                                                         "
                                                       >
-                                                        Hey there,
+                                                        Hey, ${
+                                                          name ? name : "you"
+                                                        }
                                                       </h1>
                                                     </td>
                                                   </tr>
@@ -1277,6 +1294,7 @@ export default async (req: any, res: any) => {
 </html>
       `,
     };
+
     await transporter.sendMail(mailOptions);
 
     res.status(200).send({ success: 1, message: "Email sent" });

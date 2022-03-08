@@ -47,6 +47,7 @@ const Sidebar = () => {
         await axios.post("/api/mail", {
           from: user?.email,
           to: email,
+          name: user?.displayName,
         });
 
         db.collection("chats").add({

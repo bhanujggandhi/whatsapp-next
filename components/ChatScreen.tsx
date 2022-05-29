@@ -6,7 +6,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollection } from "react-firebase-hooks/firestore";
 import TimeAgo from "timeago-react";
 import { Picker } from "emoji-mart";
-import Cryptojs from "crypto-js";
+import AnagramEncryption from "utils/util";
 
 import { ChatScreenProps } from "pages/chat/[chatId]";
 import { auth, db } from "../firebase";
@@ -82,7 +82,7 @@ const ChatScreen = ({ chat, messages }: ChatScreenProps) => {
       .collection("messages")
       .add({
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        message: Cryptojs.AES.encrypt(
+        message: AnagramEncryption.encrypt(
           input,
           process.env.NEXT_PUBLIC_SECRET_KEY as string
         ).toString(),
@@ -98,10 +98,6 @@ const ChatScreen = ({ chat, messages }: ChatScreenProps) => {
 
   const recipientEmail = getReciepientEmail(chat.users, user);
 
-  // const addEmoji = (e) => {
-  //   let emoji = e.native;
-  //   setInput(input + emoji);
-  // };
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {

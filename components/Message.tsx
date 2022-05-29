@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useAuthState } from "react-firebase-hooks/auth";
 import moment from "moment";
-import Cryptojs from "crypto-js";
+import AnagramEncryption, { AnagramConvert } from "utils/util";
 
 import { auth } from "../firebase";
 import Divider from "@material-ui/core/Divider";
@@ -15,10 +15,10 @@ const Message = ({ user, message }: any) => {
     <Container>
       <TypeOfMessage>
         {message.message
-          ? Cryptojs.AES.decrypt(
+          ? AnagramEncryption.decrypt(
               message.message,
               process.env.NEXT_PUBLIC_SECRET_KEY as string
-            ).toString(Cryptojs.enc.Utf8)
+            ).toString(AnagramConvert.Utf8)
           : null}
         <Divider variant='inset' />
         <p style={{ color: "gray" }}>
